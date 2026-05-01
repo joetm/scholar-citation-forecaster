@@ -1,0 +1,22 @@
+{
+  "name": "citation-forecast",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Firefox extension adding a year-end citation projection to Google Scholar profile pages.",
+  "scripts": {
+    "build": "node build/esbuild.config.js",
+    "dev": "npm run build && web-ext run --source-dir=dist",
+    "package": "npm run build && web-ext build --source-dir=dist --artifacts-dir=web-ext-artifacts --overwrite-dest",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "lint": "eslint --no-error-on-unmatched-pattern src test build"
+  },
+  "devDependencies": {
+    "esbuild": "0.21.5",
+    "eslint": "8.57.1",
+    "jsdom": "24.1.3",
+    "vitest": "1.6.1",
+    "web-ext": "7.12.0"
+  }
+}

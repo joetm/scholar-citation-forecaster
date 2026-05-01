@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Scholar Citation Forecaster",
+  "version": "1.0.0",
+  "description": "Adds a year-end citation projection (forecast) to Google Scholar profile pages. Fits the best-matching growth curve to your past years and overlays the prediction with a 95% confidence interval.",
+  "content_scripts": [
+    {
+      "matches": ["https://scholar.google.com/citations*"],
+      "js": ["content.bundle.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": ["https://scholar.google.com/*"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "scholar-projection-v1@jonaso.de",
+      "strict_min_version": "115.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
+}
