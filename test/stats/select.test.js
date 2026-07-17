@@ -38,12 +38,38 @@ describe('selectBestModel', () => {
     expect(result.model.name).toBe('log-linear');
   });
 
-  it('n>=6 → considers all four candidates', () => {
+  it('n>=6 → considers all seven candidates', () => {
     const years = [2020, 2021, 2022, 2023, 2024, 2025];
     const result = selectBestModel(genConstant(years, 50));
     expect(result.candidatesConsidered.sort()).toEqual(
-      ['constant', 'linear', 'log-linear', 'quadratic'].sort()
+      ['constant', 'gompertz', 'linear', 'log-linear', 'logistic', 'power-law', 'quadratic'].sort()
     );
+    expect(result.model.name).toBe('constant');
+  });
+
+  it('n=5 → adds power-law alongside log-linear', () => {
+    const years = [2021, 2022, 2023, 2024, 2025];
+    const result = selectBestModel(genLinear(years, 0, 100));
+    expect(result.candidatesConsidered.sort()).toEqual(
+      ['constant', 'linear', 'log-linear', 'power-law'].sort()
+    );
+  });
+
+  it('n>=6 picks logistic over quadratic for a rise-then-plateau history', () => {
+    const history = [
+      { year: 2014, count: 5 }, { year: 2015, count: 12 }, { year: 2016, count: 28 },
+      { year: 2017, count: 55 }, { year: 2018, count: 90 }, { year: 2019, count: 130 },
+      { year: 2020, count: 165 }, { year: 2021, count: 190 }, { year: 2022, count: 200 },
+      { year: 2023, count: 202 }, { year: 2024, count: 198 }, { year: 2025, count: 201 }
+    ];
+    const result = selectBestModel(history);
+    expect(result.model.name).toBe('logistic');
+  });
+
+  it('tie-break applies correctly even when multiple candidates hit an exact zero-residual fit', () => {
+    const years = [2020, 2021, 2022, 2023, 2024, 2025];
+    const result = selectBestModel(genConstant(years, 50));
+    expect(result.model.k_params).toBe(1);
     expect(result.model.name).toBe('constant');
   });
 
