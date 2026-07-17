@@ -9,7 +9,8 @@ A Firefox WebExtension (Manifest V3) that adds a year-end citation projection to
 ```
 src/
   stats/      pure JS, no DOM — model fitters, AICc selection, projection
-    models.js     constant, linear, log-linear, quadratic, logistic fitters
+    models/       constant, linear, log-linear, power-law, quadratic, logistic, gompertz fitters (one file per model)
+    lm.js         shared Levenberg–Marquardt engine (logistic, gompertz)
     select.js     AICc-based candidate selection + simpler-wins tie-break
     project.js    projectYearEnd(history, ytd, today)
   dom/        DOM-side, jsdom-testable
@@ -27,7 +28,7 @@ The stats and dom layers are kept strictly separate so the algorithm can be unit
 
 ## Projection algorithm (one-paragraph summary)
 
-Fit five candidate models (constant, linear, log-linear, quadratic, logistic) to the historical year/count series, gated by sample size. Select the best by **AICc**, breaking ties toward fewer parameters. Compute the model's prediction for the current year, blend it with the YTD-extrapolated value using time-weighted weights (`w_ytd = fraction_of_year_elapsed`), and report a 95% prediction interval that combines the model's residual SD with a Poisson term for YTD count noise. With n_years < 3 the candidate set collapses to constant; with n_years < 5, log-linear is also excluded; quadratic/logistic require n_years ≥ 6. See the design spec for full detail.
+Fit up to seven candidate models (constant, linear, log-linear, power-law, quadratic, logistic, gompertz) to the historical year/count series, gated by sample size. Select the best by **AICc**, breaking ties toward fewer parameters. Compute the model's prediction for the current year, blend it with the YTD-extrapolated value using time-weighted weights (`w_ytd = fraction_of_year_elapsed`), and report a 95% prediction interval that combines the model's residual SD with a Poisson term for YTD count noise. With n_years < 3 the candidate set collapses to constant; n_years 3–4 is {constant, linear}; n_years = 5 adds log-linear and power-law; quadratic, logistic, and gompertz require n_years ≥ 6 (logistic and gompertz are fit via a shared Levenberg–Marquardt engine, `stats/lm.js`, since they're nonlinear — everything else is closed-form OLS). See the design spec for full detail.
 
 ## Build & dev commands
 

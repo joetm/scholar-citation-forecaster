@@ -72,7 +72,7 @@ The hash should match the `content.bundle.js` inside the submitted `.xpi` (open 
 ## Optional checks
 
 ```sh
-npm test     # 75 unit + integration tests
+npm test     # 95 unit + integration tests
 npm run lint # eslint over src/, test/, build/
 ```
 
