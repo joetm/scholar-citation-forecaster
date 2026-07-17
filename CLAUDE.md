@@ -41,6 +41,10 @@ npm run lint             # eslint
 npm run package          # web-ext build → signed .xpi
 ```
 
+### Loading the unpacked extension manually (`about:debugging`)
+
+If Firefox is installed as a **snap** (`snap list firefox` succeeds), it's filesystem-confined to the home directory and cannot open a "Load Temporary Add-on…" file picker on `dist/manifest.json` under this repo — it fails with `Unable to load script: moz-extension://.../content.bundle.js`, which looks like a build/manifest bug but isn't. `npm run build` already copies `dist/*` to `~/scholar-citation-projection/` for exactly this reason — load `~/scholar-citation-projection/manifest.json` instead. `npm run dev` (`web-ext run`) is unaffected since it launches its own Firefox instance.
+
 ## Key references
 
 - Design spec: `docs/superpowers/specs/2026-05-01-scholar-citation-projection-design.md` — single source of truth for design decisions
